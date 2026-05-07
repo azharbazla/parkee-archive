@@ -1,5 +1,4 @@
 const { chromium } = require('playwright');
-const nodemailer = require('nodemailer');
 const fs = require('fs');
 
 (async () => {
@@ -20,16 +19,66 @@ const fs = require('fs');
         waitUntil: 'networkidle'
     });
 
-    // tunggu render
     await page.waitForTimeout(8000);
 
-    // tunggu download
+    // ambil text halaman
+    const bodyText = await page.textContent('body');
+
+    // extract amount
+    const amountMatch = bodyText.match(/IDR\s?([\d,.]+)/i);
+
+    // extract date
+    const dateMatch = bodyText.match(
+        /\d{2}\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Mei|Agu|Okt|Des)\s\d{4}/i
+    );
+
+    const amount = amountMatch
+        ? amountMatch[1].replace(/[.,]/g, '')
+        : '';
+
+    const receiptDate = dateMatch
+        ? dateMatch[0]
+        : '';
+
+    console.log('DATE:', receiptDate);
+    console.log('AMOUNT:', amount);
+
+    // load previous state
+    const statePath = 'state/last_receipt.json';
+
+    const previousState = JSON.parse(
+        fs.readFileSync(statePath, 'utf-8')
+    );
+
+    console.log('PREVIOUS:', previousState);
+
+    // compare
+    const isSame =
+        previousState.date === receiptDate &&
+        previousState.amount === amount;
+
+    if (isSame) {
+
+        console.log('NO NEW RECEIPT');
+
+        fs.writeFileSync(
+            'state/result.json',
+            JSON.stringify({
+                status: 'NO_CHANGE',
+                date: receiptDate,
+                amount: amount
+            }, null, 2)
+        );
+
+        await browser.close();
+        process.exit(0);
+    }
+
+    // DOWNLOAD RECEIPT
     const downloadPromise = page.waitForEvent('download');
 
-    // klik tombol download
     await page.getByText('DOWNLOAD').click();
 
-    // ambil hasil download
     const download = await downloadPromise;
 
     const fileName = await download.suggestedFilename();
@@ -42,31 +91,28 @@ const fs = require('fs');
 
     await download.saveAs(filePath);
 
-    console.log('Downloaded:', filePath);
+    console.log('DOWNLOADED:', filePath);
+
+    // update state
+    fs.writeFileSync(
+        statePath,
+        JSON.stringify({
+            date: receiptDate,
+            amount: amount
+        }, null, 2)
+    );
+
+    // save runtime result
+    fs.writeFileSync(
+        'state/result.json',
+        JSON.stringify({
+            status: 'NEW_RECEIPT',
+            date: receiptDate,
+            amount: amount,
+            file: filePath
+        }, null, 2)
+    );
 
     await browser.close();
-
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.GMAIL_EMAIL,
-            pass: process.env.GMAIL_APP_PASSWORD
-        }
-    });
-
-    await transporter.sendMail({
-        from: process.env.GMAIL_EMAIL,
-        to: process.env.GMAIL_EMAIL,
-        subject: `Parkee Receipt ${new Date().toISOString()}`,
-        text: 'Attached receipt download.',
-        attachments: [
-            {
-                filename: fileName,
-                path: filePath
-            }
-        ]
-    });
-
-    console.log('Email sent.');
 
 })();
