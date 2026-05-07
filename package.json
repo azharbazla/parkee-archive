@@ -2,6 +2,7 @@
   "name": "parkee-download",
   "version": "1.0.0",
   "dependencies": {
+    "googleapis": "^144.0.0",
     "nodemailer": "^6.9.13",
     "playwright": "^1.52.0"
   }
