@@ -1,5 +1,8 @@
 name: Parkee Download
 
+permissions:
+  contents: write
+  
 on:
   schedule:
     - cron: '0 23 * * 1-5'
@@ -33,6 +36,18 @@ jobs:
           GMAIL_EMAIL: ${{ secrets.GMAIL_EMAIL }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: node download.js
+
+      - name: Commit updated state
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+          git add state/last_receipt.json
+          git add state/result.json
+
+          git commit -m "update receipt state" || echo "No changes"
+
+          git push
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
