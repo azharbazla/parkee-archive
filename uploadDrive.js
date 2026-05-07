@@ -40,7 +40,8 @@ const { google } = require('googleapis');
     const response = await drive.files.create({
         resource: fileMetadata,
         media,
-        fields: 'id, webViewLink'
+        fields: 'id, webViewLink',
+        supportsAllDrives: true
     });
 
     console.log('UPLOADED:', response.data);
