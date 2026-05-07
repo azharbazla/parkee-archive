@@ -47,16 +47,16 @@ const fs = require('fs');
     await browser.close();
 
     const transporter = nodemailer.createTransport({
-        service: 'outlook',
+        service: 'gmail',
         auth: {
-            user: process.env.OUTLOOK_EMAIL,
-            pass: process.env.OUTLOOK_PASSWORD
+            user: process.env.GMAIL_EMAIL,
+            pass: process.env.GMAIL_APP_PASSWORD
         }
     });
 
     await transporter.sendMail({
-        from: process.env.OUTLOOK_EMAIL,
-        to: process.env.OUTLOOK_EMAIL,
+        from: process.env.GMAIL_EMAIL,
+        to: process.env.GMAIL_EMAIL,
         subject: `Parkee Receipt ${new Date().toISOString()}`,
         text: 'Attached receipt download.',
         attachments: [
