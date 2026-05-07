@@ -37,11 +37,10 @@ jobs:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: node download.js
 
-      - name: Upload to Google Drive
+      - name: Upload to Dropbox
         env:
-          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
-          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
-        run: node uploadDrive.js
+          DROPBOX_TOKEN: ${{ secrets.DROPBOX_TOKEN }}
+        run: node uploadDropbox.js
 
       - name: Send Email Notification
         env:

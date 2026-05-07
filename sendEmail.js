@@ -29,8 +29,8 @@ const nodemailer = require('nodemailer');
             <p><b>Amount:</b> IDR ${result.amount}</p>
 
             <p>
-                <a href="${result.driveLink}">
-                    Open Google Drive File
+                <a href="${result.dropboxLink}">
+                    Open Dropbox File
                 </a>
             </p>
         `;
