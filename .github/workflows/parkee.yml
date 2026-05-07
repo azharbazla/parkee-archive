@@ -1,4 +1,4 @@
-name: Parkee Archive
+name: Parkee Download
 
 on:
   schedule:
@@ -6,31 +6,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  archive:
+  run:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
 
-      - name: Install Playwright
-        run: |
-          npm init -y
-          npm install playwright
+      - name: Install dependencies
+        run: npm install
 
-      - name: Install Chromium
+      - name: Install Playwright Browser
         run: npx playwright install chromium
 
-      - name: Run Script
-        run: node capture.js
+      - name: Run automation
+        env:
+          OUTLOOK_EMAIL: ${{ secrets.OUTLOOK_EMAIL }}
+          OUTLOOK_PASSWORD: ${{ secrets.OUTLOOK_PASSWORD }}
+        run: node download.js
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: parkee-archive
+          name: parkee-download
           path: output/
