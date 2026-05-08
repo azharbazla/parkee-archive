@@ -1,7 +1,5 @@
 {
-  "status": "NEW_RECEIPT",
+  "status": "NO_CHANGE",
   "date": "07 May 2026",
-  "amount": "18000",
-  "file": "output/receipt_BAC7972F_07052026.png",
-  "dropboxLink": "https://www.dropbox.com/scl/fi/pznlmzeksecpu1rt6wrhx/receipt_BAC7972F_07052026.png?rlkey=tx53adc6399mud278ye2l1ypl&dl=0"
+  "amount": "18000"
 }
