@@ -19,9 +19,7 @@ const nodemailer = require('nodemailer');
     let html = '';
 
     if (result.status === 'NEW_RECEIPT') {
-
         subject = '[SUCCESS] New Parkee Receipt';
-
         html = `
             <h2>New Receipt Detected</h2>
 
@@ -30,11 +28,8 @@ const nodemailer = require('nodemailer');
 
             <p>Receipt successfully archived to GitHub repository.</p>
         `;
-
     } else {
-
         subject = '[INFO] No New Parkee Receipt';
-
         html = `
             <h2>No New Receipt</h2>
 
@@ -55,7 +50,5 @@ const nodemailer = require('nodemailer');
         subject,
         html
     });
-
     console.log('EMAIL SENT');
-
 })();

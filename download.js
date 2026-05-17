@@ -14,9 +14,7 @@ const fs = require('fs');
     });
 
     const page = await context.newPage();
-
     const url = 'https://r.parkee.app/?l=164&ps=BAC7972F';
-
     await page.goto(url, {
         waitUntil: 'networkidle'
     });
@@ -53,9 +51,7 @@ const fs = require('fs');
         previousState.amount === amount;
 
     if (isSame) {
-
         console.log('NO NEW RECEIPT');
-
         fs.writeFileSync(
             'state/result.json',
             JSON.stringify({
@@ -64,17 +60,13 @@ const fs = require('fs');
                 amount: amount
             }, null, 2)
         );
-
         await browser.close();
         process.exit(0);
     }
 
     const downloadPromise = page.waitForEvent('download');
-
     await page.getByText('DOWNLOAD').click();
-
     const download = await downloadPromise;
-
     const fileName = await download.suggestedFilename();
 
     if (!fs.existsSync('output')) {
@@ -82,9 +74,7 @@ const fs = require('fs');
     }
 
     const now = new Date();
-
     const year = now.getFullYear();
-
     const month = String(
         now.getMonth() + 1
     ).padStart(2, '0');
@@ -98,9 +88,7 @@ const fs = require('fs');
     }
 
     const filePath = `${dirPath}/${fileName}`;
-
     await download.saveAs(filePath);
-
     console.log('DOWNLOADED:', filePath);
 
     fs.writeFileSync(

@@ -16,7 +16,6 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -25,20 +24,17 @@ jobs:
         with:
           node-version: 24
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
 
       - name: Install Playwright Browser
         run: npx playwright install chromium
 
-      - name: Run automation
+      - name: Run Automation
         env:
           GMAIL_EMAIL: ${{ secrets.GMAIL_EMAIL }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: node download.js
-
-      - name: Compress Monthly Archive
-        run: node compressMonthly.js
 
       - name: Send Email Notification
         env:
@@ -52,12 +48,5 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add state/
           git add receipts/
-          git add archives/
           git commit -m "archive receipt" || echo "No changes"
           git push
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: parkee-download
-          path: output/
