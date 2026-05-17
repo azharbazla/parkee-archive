@@ -2,7 +2,7 @@
   "name": "parkee-download",
   "version": "1.0.0",
   "dependencies": {
-    "dropbox": "^10.34.0",
+    "archiver": "^7.0.1",
     "nodemailer": "^6.9.13",
     "playwright": "^1.52.0"
   }

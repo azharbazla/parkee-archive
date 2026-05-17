@@ -8,7 +8,9 @@ const fs = require('fs');
     });
 
     const context = await browser.newContext({
-        acceptDownloads: true
+        acceptDownloads: true,
+        timezoneId: 'Asia/Jakarta',
+        locale: 'id-ID'
     });
 
     const page = await context.newPage();
@@ -21,13 +23,8 @@ const fs = require('fs');
 
     await page.waitForTimeout(8000);
 
-    // ambil text halaman
     const bodyText = await page.textContent('body');
-
-    // extract amount
     const amountMatch = bodyText.match(/IDR\s?([\d,.]+)/i);
-
-    // extract date
     const dateMatch = bodyText.match(
         /\d{2}\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Mei|Agu|Okt|Des)\s\d{4}/i
     );
@@ -43,7 +40,6 @@ const fs = require('fs');
     console.log('DATE:', receiptDate);
     console.log('AMOUNT:', amount);
 
-    // load previous state
     const statePath = 'state/last_receipt.json';
 
     const previousState = JSON.parse(
@@ -52,7 +48,6 @@ const fs = require('fs');
 
     console.log('PREVIOUS:', previousState);
 
-    // compare
     const isSame =
         previousState.date === receiptDate &&
         previousState.amount === amount;
@@ -74,7 +69,6 @@ const fs = require('fs');
         process.exit(0);
     }
 
-    // DOWNLOAD RECEIPT
     const downloadPromise = page.waitForEvent('download');
 
     await page.getByText('DOWNLOAD').click();
@@ -87,13 +81,28 @@ const fs = require('fs');
         fs.mkdirSync('output');
     }
 
-    const filePath = `output/${fileName}`;
+    const now = new Date();
+
+    const year = now.getFullYear();
+
+    const month = String(
+        now.getMonth() + 1
+    ).padStart(2, '0');
+
+    const dirPath = `receipts/${year}/${month}`;
+
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, {
+            recursive: true
+        });
+    }
+
+    const filePath = `${dirPath}/${fileName}`;
 
     await download.saveAs(filePath);
 
     console.log('DOWNLOADED:', filePath);
 
-    // update state
     fs.writeFileSync(
         statePath,
         JSON.stringify({
@@ -102,7 +111,6 @@ const fs = require('fs');
         }, null, 2)
     );
 
-    // save runtime result
     fs.writeFileSync(
         'state/result.json',
         JSON.stringify({
@@ -114,5 +122,4 @@ const fs = require('fs');
     );
 
     await browser.close();
-
 })();

@@ -28,11 +28,7 @@ const nodemailer = require('nodemailer');
             <p><b>Date:</b> ${result.date}</p>
             <p><b>Amount:</b> IDR ${result.amount}</p>
 
-            <p>
-                <a href="${result.dropboxLink}">
-                    Open Dropbox File
-                </a>
-            </p>
+            <p>Receipt successfully archived to GitHub repository.</p>
         `;
 
     } else {
