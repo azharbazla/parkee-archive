@@ -1,6 +1,5 @@
 {
-  "status": "NEW_RECEIPT",
+  "status": "NO_CHANGE",
   "date": "17 Jul 2026",
-  "amount": "12000",
-  "file": "receipts/2026/07/receipt_BAC7972F_17072026.png"
+  "amount": "12000"
 }
